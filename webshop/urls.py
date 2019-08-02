@@ -5,4 +5,5 @@ app_name = 'webshop'
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('signup/', views.signup, name='signup'),
 ]
