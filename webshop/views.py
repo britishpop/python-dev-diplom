@@ -2,11 +2,23 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .forms import WebshopUserCreationForm, ProfileForm, WebshopAuthForm
 from django.contrib.auth import login, authenticate, logout
+from .models import Product, ProductInfo, Shop, Parameter, Category
 
 # Create your views here.
 
 def index(request):
-    return HttpResponse("that's just the beginning!")
+    products = Product.objects.all().prefetch_related('productinfo_set')
+    shops = Shop.objects.all()
+    parameters = Parameter.objects.all().prefetch_related('productparameter_set')
+    categories = Category.objects.all()
+
+    context = {
+        'products': products,
+        'shops': shops,
+        'parameters': parameters,
+        'categories': categories,
+    }
+    return render(request, 'index.html', context)
 
 def shop_signup(request):
     if request.method == 'POST':

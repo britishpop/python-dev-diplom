@@ -11,6 +11,11 @@ class WebshopUserCreationForm(UserCreationForm):
             'placeholder': 'Имя пользователя',
             'id': 'inputUsername',}
     ))
+    email = forms.EmailField(widget=EmailInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Электронный адрес',
+        'id': 'inputEmail',}
+    ))
     password1 = forms.CharField(label=("Пароль"),
         widget=PasswordInput(attrs={
             'class': 'form-control',
@@ -38,7 +43,7 @@ class WebshopUserCreationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('username', 'password1', 'password2', 'last_name', 'first_name')
+        fields = ('username', 'email', 'password1', 'password2', 'last_name', 'first_name')
 
 class ProfileForm(forms.ModelForm):
     middle_name = forms.CharField(label=("Отчество"),
@@ -72,7 +77,7 @@ class WebshopAuthForm(AuthenticationForm):
             'placeholder': 'Имя пользователя',
             'id': 'inputUsername',}
     ))
-    password = forms.CharField(label=("Пароль еще раз"),
+    password = forms.CharField(label=("Пароль"),
         widget=PasswordInput(attrs={
             'class': 'form-control',
             'placeholder':'Введите пароль',

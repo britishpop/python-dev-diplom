@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1 class="display-3">Каталог</h1>
+    <div class="row">
+        <div class="col-2">
+            <h3>Категории:</h3>
+            <form method="post">
+                {% csrf_token %}
+                {% for category in categories %}
+                    <div class="form-check">
+                        <label class="form-check-label">
+                        <input type="checkbox" class="form-check-input" value="">{{ category.name }}
+                    </label>
+                    </div>
+                {% endfor %}
+                <button class="btn btn-light" type="submit">Применить</button>
+            </form>
+        </div>
+        <div class="row col-md-8 bg-light">
+            {% for product in products %}
+            <a class="col-md-4" href="#">
+                {{ product.name }}
+            </a>
+            {% endfor %}
+        </div>
+        <div class="col-2">
+            <h3>Магазины:</h3>
+            <form method="post">
+            {% csrf_token %}
+            {% for shop in shops %}
+                <div class="form-check">
+                        <label class="form-check-label">
+                        <input type="checkbox" class="form-check-input" value="">{{ shop.name }}
+                    </label>
+                </div>
+            {% endfor %}
+            <button class="btn btn-light" type="submit">Применить</button>
+            </form>
+            <h3>Характеристики:</h3>
+            <form method="post">
+            {% csrf_token %}
+            {% for parameter in parameters %}
+                <div class="form-check">
+                        <label class="form-check-label">
+                        <input type="checkbox" class="form-check-input" value="">{{ parameter.name }}
+                    </label>
+                </div>
+            {% endfor %}
+            <button class="btn btn-light" type="submit">Применить</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
