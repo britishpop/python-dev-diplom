@@ -16,14 +16,15 @@ class Profile(models.Model):
         return 'Информация о пользователе №%s (%s)' % (self.user.pk, self.user.get_full_name())
 
 
-@receiver(post_save, sender=User)
+@receiver(post_save, sender=User) # сигнал для создания админов через консоль (иначе создается без профиля)
 def create_user_profile(sender, instance, created, **kwargs):
-    if created:
+    if created and instance.is_staff:
         Profile.objects.create(user=instance)
 
-@receiver(post_save, sender=User)
+@receiver(post_save, sender=User) # сигнал для создания админов через консоль (иначе создается без профиля)
 def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
+    if instance.is_staff:
+        instance.profile.save()
 
 
 class Shop(models.Model):

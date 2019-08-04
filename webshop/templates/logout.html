@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}<link type="text/css" rel="stylesheet" href="{% static "css/auth.css" %}">{% endblock %}
+
+{% block content %}
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+          <div class="card card-signin my-5">
+            <div class="card-body">
+              <h5 class="card-title text-center">Выход из профиля через 2 секунды</h5>
+              <a class="btn btn-lg btn-primary btn-block" href="{% url 'webshop:index' %}">Перейти сейчас</a>
+              <hr class="my-4">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+        function redirect(){
+            window.location.href = "{% url 'webshop:index' %}";
+        }
+        setTimeout(redirect, 2000);
+    </script>
+{% endblock %}
