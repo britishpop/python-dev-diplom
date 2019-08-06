@@ -60,8 +60,8 @@ class ProductInfo(models.Model):
     quantity = models.PositiveIntegerField('остаток', default=0)
     price = models.PositiveIntegerField('цена', default=0)
     price_rrc = models.PositiveIntegerField('рекомендуемая розничная цена', default=0)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
+    product = models.OneToOneField(Product, on_delete=models.CASCADE)
+    shops = models.ManyToManyField(Shop, related_name='products')
 
     def __str__(self):
         return 'Инфо о продукте %s' % (self.product.name)
@@ -114,6 +114,9 @@ class Contact(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def get_user_contacts(self):
-        return self.user.email # TODO: дописать метод, чтобы возвращал контакты пользователя
+        return self.user.contact_set.all()
+
+    def __str__(self):
+        return '%s: %s' % (self.type, self.value)
 
 

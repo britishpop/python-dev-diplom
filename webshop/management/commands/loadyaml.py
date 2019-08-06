@@ -47,9 +47,9 @@ class Command(BaseCommand):
                 price=item['price'],
                 price_rrc=item['price_rrc'],
                 product=product,
-                shop=shop,
             )
             product_info.save()
+            product_info.shops.add(shop)
 
             for name, value in item['parameters'].items():
                 parameter, created = Parameter.objects.get_or_create(
@@ -61,4 +61,5 @@ class Command(BaseCommand):
                     product_info=product_info,
                     parameter=parameter,
                 )
+                product_parameter.save()
 
