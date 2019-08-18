@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Заказы</h1>
+    <table class="cart-table">
+        <tr>
+            <th>Номер</th>
+            <th>Товары</th>
+            <th>Статус</th>
+        </tr>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.pk }}</td>
+            <td>
+                <ul>
+                    {% for product in order.orderitem_set.all %}
+                    <li>{{ product.product.name }}, {{ product.quantity }} шт., стоимость {{ product.sum }} ₽</li>
+                    {% endfor %}
+                </ul>
+            </td>
+            <td>{{ order.status }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
