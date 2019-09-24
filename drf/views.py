@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User
@@ -10,92 +10,107 @@ from .serializers import UserSerializer, ShopSerializer, ProductSerializer, Orde
 
 # User classes
 
-class UsersView(generics.ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+class UserViewSet(viewsets.ViewSet):
+    
+    def list(self, request):
+        queryset = User.objects.all()
+        serializer = UserSerializer(queryset, many=True)
+        return Response(serializer.data)
 
+    def create(self, request):
+        queryset = User.objects.all()
+        serializer = UserSerializer(queryset, many=True)
+        return Response(serializer.data)
 
-class UserView(generics.RetrieveAPIView):
-    lookup_field = 'pk'
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+    def retrieve(self, request, pk=None):
+        queryset = User.objects.all()
+        user = get_object_or_404(queryset, pk=pk)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
 
+    def destroy(self, request, pk=None):
+        queryset = User.objects.all()
+        user = get_object_or_404(queryset, pk=pk)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
 
-class UserCreateView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
-class UserDeleteView(generics.DestroyAPIView):
-    lookup_field = 'pk'
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
 
 # Shop classes
 
-class ShopsView(generics.ListAPIView):
-    queryset = Shop.objects.all()
-    serializer_class = ShopSerializer
+class ShopViewSet(viewsets.ViewSet):
+    
+    def list(self, request):
+        queryset = Shop.objects.all()
+        serializer = ShopSerializer(queryset, many=True)
+        return Response(serializer.data)
 
+    def create(self, request):
+        queryset = Shop.objects.all()
+        serializer = ShopSerializer(queryset, many=True)
+        return Response(serializer.data)
 
-class ShopView(generics.RetrieveAPIView):
-    lookup_field = 'pk'
-    queryset = Shop.objects.all()
-    serializer_class = ShopSerializer
+    def retrieve(self, request, pk=None):
+        queryset = Shop.objects.all()
+        shop = get_object_or_404(queryset, pk=pk)
+        serializer = ShopSerializer(shop)
+        return Response(serializer.data)
 
+    def destroy(self, request, pk=None):
+        queryset = Shop.objects.all()
+        shop = get_object_or_404(queryset, pk=pk)
+        serializer = ShopSerializer(shop)
+        return Response(serializer.data)
 
-class ShopCreateView(generics.CreateAPIView):
-    queryset = Shop.objects.all()
-    serializer_class = ShopSerializer
-
-
-class ShopDeleteView(generics.DestroyAPIView):
-    lookup_field = 'pk'
-    queryset = Shop.objects.all()
-    serializer_class = ShopSerializer
 
 # Product classes
 
-class ProductsView(generics.ListAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+class ProductViewSet(viewsets.ViewSet):
+    
+    def list(self, request):
+        queryset = Product.objects.all()
+        serializer = ProductSerializer(queryset, many=True)
+        return Response(serializer.data)
 
+    def create(self, request):
+        queryset = Product.objects.all()
+        serializer = ProductSerializer(queryset, many=True)
+        return Response(serializer.data)
 
-class ProductView(generics.RetrieveAPIView):
-    lookup_field = 'pk'
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+    def retrieve(self, request, pk=None):
+        queryset = Product.objects.all()
+        product = get_object_or_404(queryset, pk=pk)
+        serializer = ProductSerializer(product)
+        return Response(serializer.data)
 
+    def destroy(self, request, pk=None):
+        queryset = Product.objects.all()
+        product = get_object_or_404(queryset, pk=pk)
+        serializer = ProductSerializer(product)
+        return Response(serializer.data)
 
-class ProductCreateView(generics.CreateAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-
-
-class ProductDeleteView(generics.DestroyAPIView):
-    lookup_field = 'pk'
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
 
 # Order classes
 
-class OrdersView(generics.ListAPIView):
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializer
+class OrderViewSet(viewsets.ViewSet):
+    
+    def list(self, request):
+        queryset = Order.objects.all()
+        serializer = OrderSerializer(queryset, many=True)
+        return Response(serializer.data)
 
+    def create(self, request):
+        queryset = Order.objects.all()
+        serializer = OrderSerializer(queryset, many=True)
+        return Response(serializer.data)
 
-class OrderView(generics.RetrieveAPIView):
-    lookup_field = 'pk'
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializer
+    def retrieve(self, request, pk=None):
+        queryset = Order.objects.all()
+        order = get_object_or_404(queryset, pk=pk)
+        serializer = OrderSerializer(order)
+        return Response(serializer.data)
 
-
-class OrderCreateView(generics.CreateAPIView):
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializer
-
-
-class OrderDeleteView(generics.DestroyAPIView):
-    lookup_field = 'pk'
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializer
+    def destroy(self, request, pk=None):
+        queryset = Order.objects.all()
+        order = get_object_or_404(queryset, pk=pk)
+        serializer = OrderSerializer(order)
+        return Response(serializer.data)
