@@ -10,12 +10,12 @@
             <th>Количество</th>
             <th>Сумма</th>
         </tr>
-        {% for content in cart_contents %}
+        {% for item in cart.cartitem_set.all %}
         <tr>
-            <td>{{ content.0.name }}</td>
-            <td>{{ content.1.name }}</td>
-            <td>{{ content.2 }}</td>
-            <td>{{ content.3 }} ₽</td>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.shop.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.sum }} ₽</td>
         </tr>
         {% endfor %}
     </table>
@@ -26,13 +26,13 @@
                 Стоимость доставки = количество поставщиков * 100 руб.</p>
         </div>
         <div class="col">
-            <p>Итого: <span class="font-weight-bold">{{ price_total }} ₽</span></p>
-            <p>Доставка: <span class="font-weight-bold">{{ delivery_count }} ₽</span></p>
-            <p>К оплате: <span class="font-weight-bold">{{ price_total|add:delivery_count }} ₽</span></p>
+            <p>Итого: <span class="font-weight-bold">{{ cart.total }} ₽</span></p>
+            <p>Доставка: <span class="font-weight-bold">{{ cart.delivery }} ₽</span></p>
+            <p>К оплате: <span class="font-weight-bold">{{ cart.total|add:cart.delivery }} ₽</span></p>
             <form action="{% url 'webshop:create_order' %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="order_action" value="create">
-                <button type="submit" class="submit_btn btn label-success" {% if not cart_contents %}disabled{% endif %}>
+                <button type="submit" class="submit_btn btn label-success" {% if not cart.total_items %}disabled{% endif %}>
                     Оформить
                 </button>
             </form>

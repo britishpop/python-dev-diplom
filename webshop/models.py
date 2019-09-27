@@ -120,3 +120,37 @@ class Contact(models.Model):
         return '%s: %s' % (self.type, self.value)
 
 
+class Cart(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def delivery(self):
+        return self.cartitem_set.values('shop').distinct().count() * 100
+
+    def total(self):
+        total_cost = 0
+        for item in self.cartitem_set.all():
+            total_cost += item.sum()
+        return total_cost
+
+    def total_items(self):
+        return self.cartitem_set.count()
+
+    def __str__(self):
+        return 'Корзина пользователя %s' % (self.user)
+
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField('количество', default=0)
+    shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
+    
+    def price(self):
+        return self.product.get_info().price_rrc
+
+    def sum(self):
+        return self.price() * self.quantity
+
+    def __str__(self):
+        return 'Продукт %s в корзине №%s' % (self.product.name, self.cart.pk)
+

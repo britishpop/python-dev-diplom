@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from .forms import WebshopUserCreationForm, ProfileForm, WebshopAuthForm
 from django.contrib.auth import login, authenticate, logout
-from .models import Product, ProductInfo, Shop, Parameter, Category, Order, OrderItem
+from .models import Product, ProductInfo, Shop, Parameter, Category, Order, OrderItem, Cart, CartItem
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required
 
@@ -32,6 +32,9 @@ def shop_signup(request):
             profile = profile_form.save(commit=False)
             profile.user = new_user
             profile.save()
+
+            cart = Cart(user=new_user)
+            cart.save()
             
             username = user_form.cleaned_data.get('username')
             raw_password = user_form.cleaned_data.get('password1')
@@ -66,42 +69,27 @@ def shop_logout(request):
 
 @login_required
 def cart(request):
-    if not request.session.session_key: # если нет сессии - создать ее
-        request.session.save()
-
-    if not request.session.get('cart_contents'): # если нет корзины в сессии - создать ее
-        request.session['cart_contents'] = {}
-
-    cart_contents = request.session['cart_contents']
-
-    if request.method == 'POST': # запрос приходит после нажатия кнопки "Добавить в корзину"
-        product_id = request.POST['product_id'] # смотрим какой товар пользователь добавил через кнопку
-        product_count = int(request.POST['quantity'])
-        shop_id = request.POST['shop']
-        if not cart_contents.get(product_id): # если этого товара еще не было в корзине - его кол-во станет 1
-            cart_contents[product_id] = [product_count, shop_id]
+    cart = request.user.cart
+    
+    if request.method == 'POST':
+        product = Product.objects.get(pk=request.POST['product_id'])
+        quantity = int(request.POST['quantity'])
+        if {'product': product.pk} in cart.cartitem_set.values('product').distinct():
+            current_cart_item = cart.cartitem_set.get(product=product)
+            current_cart_item.quantity += quantity
+            current_cart_item.save()
         else:
-            cart_contents[product_id][0] += product_count # если товар в корзине уже лежал - увеличить на 1
-        request.session.modified = True # сохранить корзину в сессии
-
-    object_list = [] # этот список товаров уйдет на рендер
-    shop_list = [] # здесь собираются все магазины, чтобы потом узнать длину списка для расчета доставки
-    price_total = 0 # сюда прибавляется цена каждого продукта
-
-    for product in cart_contents:
-        product_object = Product.objects.get(pk=product) # получим из базы объект товара
-        quantity = int(cart_contents[product][0]) # получим количество товара из корзины
-        price_product_total = product_object.productinfo.price_rrc * quantity
-        price_total += price_product_total
-        shop = Shop.objects.get(pk=cart_contents[product][1])
-        if shop not in shop_list:
-            shop_list.append(shop)
-        object_list.append([product_object, shop, quantity, price_product_total]) # добавим товар и количество в список на рендер
+            shop = Shop.objects.get(pk=request.POST['shop'])
+            new_cart_item = CartItem(
+                cart=cart,
+                product=product,
+                quantity=quantity,
+                shop=shop
+            )
+            new_cart_item.save()
 
     context = {
-        'cart_contents': object_list,
-        'delivery_count': len(shop_list) * 100,
-        'price_total': price_total,
+        'cart': cart,
     }
 
     return render(request, 'cart.html', context)
@@ -109,10 +97,11 @@ def cart(request):
 @login_required
 def create_order(request):
     if request.method == 'POST' and request.POST['order_action'] == 'create':
-        if not request.session.get('cart_contents'):
+        cart = request.user.cart
+        
+        if len(cart.cartitem_set.all()) == 0:
             return redirect('webshop:cart')
 
-        cart_contents = request.session['cart_contents']
 
         new_order = Order(
             user=request.user,
@@ -120,22 +109,17 @@ def create_order(request):
         )
         new_order.save()
 
-        for item in cart_contents:
-            product = Product.objects.get(pk=item)
-            quantity = int(cart_contents[item][0])
-            shop = Shop.objects.get(pk=cart_contents[item][1])
+        for cart_item in cart.cartitem_set.all():
             new_order_item = OrderItem(
-                quantity=quantity,
+                quantity=cart_item.quantity,
                 order=new_order,
-                product=product,
-                shop=shop,
+                product=cart_item.product,
+                shop=cart_item.shop,
             )
             new_order_item.save()
-        
-        request.session['cart_contents'] = {}
-        request.session.modified = True
+            cart_item.delete()
 
-    return redirect('webshop:cart')
+    return redirect('webshop:order_list')
 
 @login_required
 def order_list(request):
