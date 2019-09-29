@@ -26,9 +26,9 @@
                 Стоимость доставки = количество поставщиков * 100 руб.</p>
         </div>
         <div class="col">
-            <p>Итого: <span class="font-weight-bold">{{ cart.total }} ₽</span></p>
-            <p>Доставка: <span class="font-weight-bold">{{ cart.delivery }} ₽</span></p>
-            <p>К оплате: <span class="font-weight-bold">{{ cart.total|add:cart.delivery }} ₽</span></p>
+            <p>Итого: <span class="font-weight-bold">{{ cart.items_cost }} ₽</span></p>
+            <p>Доставка: <span class="font-weight-bold">{{ cart.delivery_cost }} ₽</span></p>
+            <p>К оплате: <span class="font-weight-bold">{{ cart.total_cost }} ₽</span></p>
             <form action="{% url 'webshop:create_order' %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="order_action" value="create">

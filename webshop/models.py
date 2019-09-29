@@ -123,14 +123,17 @@ class Contact(models.Model):
 class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    def delivery(self):
+    def delivery_cost(self):
         return self.cartitem_set.values('shop').distinct().count() * 100
 
-    def total(self):
-        total_cost = 0
+    def items_cost(self):
+        items_cost = 0
         for item in self.cartitem_set.all():
-            total_cost += item.sum()
-        return total_cost
+            items_cost += item.sum()
+        return items_cost
+
+    def total_cost(self):
+        return self.delivery_cost() + self.items_cost()
 
     def total_items(self):
         return self.cartitem_set.count()
