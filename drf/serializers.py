@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from webshop.models import Shop, Product, ProductInfo, Order
+from webshop.models import Shop, Product, ProductInfo, Order, Cart
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -17,14 +17,6 @@ class ShopSerializer(serializers.ModelSerializer):
         depth = 1
 
 
-class ProductInfoSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = ProductInfo
-        fields = ('name', 'quantity', 'price', 'price_rrc', 'shops')
-        depth = 1
-
-
 class ProductSerializer(serializers.ModelSerializer):
     
     class Meta:
@@ -34,7 +26,18 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    user = serializers.CurrentUserDefault()
+
     class Meta:
         model = Order
         fields = ('id', 'dt', 'status', 'user', 'orderitem_set')
         depth = 1
+
+
+class CartSerializer(serializers.ModelSerializer):
+    user = serializers.CurrentUserDefault()
+
+    class Meta:
+        model = Cart
+        fields = ('id', 'user', 'cartitem_set')
+        depth = 2
