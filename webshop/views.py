@@ -41,6 +41,8 @@ def shop_signup(request):
             user = authenticate(username=username, password=raw_password)
             login(request, user)
             return redirect('webshop:index')
+        print(user_form.errors)
+        print(profile_form.errors)
     else:
         user_form = WebshopUserCreationForm()
         profile_form = ProfileForm()
